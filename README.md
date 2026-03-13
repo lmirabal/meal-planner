@@ -1,35 +1,34 @@
-This is a Kotlin Multiplatform project targeting Android, iOS.
+# Meal Planner — A shopping list app for iPhone
 
-* [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./composeApp/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./composeApp/src/jvmMain/kotlin)
-    folder is the appropriate location.
+A grocery list app where items have quantities with mixed units (e.g. "3 lemons", "300g mince beef",
+"⅓ tsp cinnamon"). Tracks when items were added, ticked off, and where they were bought.
 
-* [/iosApp](./iosApp/iosApp) contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+## Tech stack
 
-### Build and Run Android Application
+| Layer | Choice |
+|-------|--------|
+| Language | Kotlin (no Swift) |
+| Framework | Kotlin Multiplatform + Compose Multiplatform |
+| UI components | [compose-cupertino](https://github.com/alexzhirkevich/compose-cupertino) — Cupertino widgets on iOS, Material3 on Android |
+| Storage | SQLDelight 2.x (local SQLite, no backend) |
+| State | AndroidX ViewModel + Kotlin StateFlow |
+| Navigation | `org.jetbrains.androidx.navigation:navigation-compose` |
 
-To build and run the development version of the Android app, use the run configuration from the run widget
-in your IDE’s toolbar or build it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:assembleDebug
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:assembleDebug
-  ```
+## Getting started
 
-### Build and Run iOS Application
+**Prerequisites**
 
-To build and run the development version of the iOS app, use the run configuration from the run widget
-in your IDE’s toolbar or open the [/iosApp](./iosApp) directory in Xcode and run it from there.
+- [kdoctor](https://github.com/Kotlin/kdoctor) — verify your environment: `kdoctor`
+- Android Studio (with Kotlin Multiplatform plugin)
+- Xcode 15+
 
----
+**Run on iOS simulator**
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+1. Open the project in Android Studio.
+2. Select the `iosApp` run configuration and choose an iPhone simulator.
+3. Click Run — or open `iosApp/` in Xcode and run from there.
+
+## Roadmap
+
+Active iterations are tracked as GitHub issues under the
+[v0.1 milestone](https://github.com/lmirabal/meal-planner/milestone/1).
