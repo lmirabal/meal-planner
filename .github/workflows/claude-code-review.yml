@@ -42,7 +42,7 @@ jobs:
 
             /code-review:code-review --comment
           show_full_output: true
-          claude_args: --max-turns 10
+          claude_args: --max-turns 10 --dangerously-skip-permissions
           # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
           # or https://code.claude.com/docs/en/cli-reference for available options
 
