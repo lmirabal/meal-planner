@@ -1,9 +1,11 @@
 package dev.mirabal.mealplanner
 
-import dev.mirabal.mealplanner.shopping.InMemoryItemRepository
+import app.cash.sqldelight.db.SqlDriver
 import dev.mirabal.mealplanner.shopping.ShoppingListViewModel
+import dev.mirabal.mealplanner.shopping.SqlDelightItemRepository
 
-class AppDependencies {
-    private val itemRepository = InMemoryItemRepository()
+class AppDependencies(driver: SqlDriver) {
+    private val database = MealPlannerDatabase(driver)
+    private val itemRepository = SqlDelightItemRepository(database.mealPlannerDatabaseQueries)
     val shoppingListViewModel = ShoppingListViewModel(itemRepository)
 }
