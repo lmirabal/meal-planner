@@ -1,5 +1,5 @@
 package dev.mirabal.mealplanner.shopping
 
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 value class AddedAt(val value: Instant)
