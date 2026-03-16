@@ -1,3 +1,5 @@
+@file:OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.composeMultiplatform)
@@ -6,6 +8,10 @@ plugins {
 }
 
 kotlin {
+    compilerOptions {
+        allWarningsAsErrors = true
+    }
+
     listOf(
         iosArm64(),
         iosSimulatorArm64()
