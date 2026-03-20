@@ -1,19 +1,17 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+@file:OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.sqldelight)
 }
 
 kotlin {
-    androidTarget {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
-        }
+    compilerOptions {
+        allWarningsAsErrors = true
     }
-    
+
     listOf(
         iosArm64(),
         iosSimulatorArm64()
@@ -23,12 +21,8 @@ kotlin {
             isStatic = true
         }
     }
-    
+
     sourceSets {
-        androidMain.dependencies {
-            implementation(libs.androidx.activity.compose)
-            implementation(libs.androidx.appcompat)
-        }
         commonMain.dependencies {
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
@@ -38,41 +32,44 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+            implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlinx.datetime)
+            implementation(libs.cupertino)
+            implementation(libs.sqldelight.runtime)
+            implementation(libs.sqldelight.coroutines)
+        }
+        iosMain.dependencies {
+            implementation(libs.sqldelight.native.driver)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+            implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.compose.ui.test)
         }
     }
 }
 
-android {
-    namespace = "dev.mirabal.mealplanner"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-
-    defaultConfig {
-        applicationId = "dev.mirabal.mealplanner"
-        minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
-    }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
-        }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
+val buildIosSimulator = tasks.register<Exec>("buildIosSimulator") {
+    group = "verification"
+    description = "Build the Xcode app for the iOS simulator to catch linker errors"
+    commandLine(
+        "xcodebuild",
+        "-project", "${rootDir}/iosApp/iosApp.xcodeproj",
+        "-scheme", "iosApp",
+        "-destination", "generic/platform=iOS Simulator",
+        "build",
+        "CODE_SIGNING_ALLOWED=NO",
+    )
 }
 
-dependencies {
-    debugImplementation(libs.compose.uiTooling)
+tasks.named("check") {
+    dependsOn(buildIosSimulator)
 }
 
+sqldelight {
+    databases {
+        create("MealPlannerDatabase") {
+            packageName.set("dev.mirabal.mealplanner")
+        }
+    }
+}
