@@ -4,7 +4,23 @@ plugins {
     alias(libs.plugins.composeCompiler)
 }
 
+configurations.all {
+    exclude(group = "androidx.lifecycle")
+    exclude(group = "androidx.savedstate")
+    exclude(group = "org.jetbrains.compose.annotation-internal")
+    exclude(group = "org.jetbrains.compose.collection-internal")
+    resolutionStrategy.eachDependency {
+        if (requested.group == "org.jetbrains.compose.runtime") {
+            useTarget("androidx.compose.runtime:${requested.name}:${libs.versions.composeMultiplatform.get()}")
+        }
+    }
+}
+
 kotlin {
+    compilerOptions {
+        allWarningsAsErrors = true
+    }
+
     listOf(
         iosArm64(),
         iosSimulatorArm64()
@@ -12,6 +28,7 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
+            binaryOption("bundleId", "dev.mirabal.mealplanner")
         }
     }
 
