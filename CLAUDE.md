@@ -26,6 +26,12 @@ off, and where they were bought.
 - Platform-specific code is minimal: just `SqlDriver` factory per platform
 - `iosApp/` contains a thin Swift wrapper calling Kotlin's `MainViewController`
 
+## Working style
+
+- Before investigating a problem by inspecting jars, decompiling bytecode, or reasoning from first
+  principles, search for the answer first — check official docs, GitHub issues, Stack Overflow, or
+  known library changelogs. Prefer a confirmed known answer over a self-derived one.
+
 ## Code conventions
 
 - No comments in code. If code is unclear, extract a method.
