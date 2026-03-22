@@ -48,3 +48,18 @@ kotlin {
         }
     }
 }
+
+val verifyXcodeBuild by tasks.registering(Exec::class) {
+    group = "verification"
+    commandLine(
+        "xcodebuild",
+        "-project", "../iosApp/iosApp.xcodeproj",
+        "-scheme", "iosApp",
+        "-destination", "generic/platform=iOS Simulator",
+        "build"
+    )
+}
+
+tasks.named("check") {
+    dependsOn(verifyXcodeBuild)
+}
