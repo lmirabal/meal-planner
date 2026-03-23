@@ -57,7 +57,7 @@ val verifyXcodeBuild by tasks.registering(Exec::class) {
     environment("OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED", "YES")
     commandLine(
         "xcodebuild",
-        "-project", "../iosApp/iosApp.xcodeproj",
+        "-project", "${rootProject.projectDir}/iosApp/iosApp.xcodeproj",
         "-scheme", "iosApp",
         "-destination", "generic/platform=iOS Simulator",
         "FRAMEWORK_SEARCH_PATHS=${frameworkDir.get().asFile.absolutePath}",
