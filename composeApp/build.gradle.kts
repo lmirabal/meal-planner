@@ -49,13 +49,18 @@ kotlin {
     }
 }
 
+val frameworkDir = layout.buildDirectory.dir("bin/iosSimulatorArm64/debugFramework")
+
 val verifyXcodeBuild by tasks.registering(Exec::class) {
     group = "verification"
+    dependsOn(tasks.named("linkDebugFrameworkIosSimulatorArm64"))
+    environment("OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED", "YES")
     commandLine(
         "xcodebuild",
         "-project", "../iosApp/iosApp.xcodeproj",
         "-scheme", "iosApp",
         "-destination", "generic/platform=iOS Simulator",
+        "FRAMEWORK_SEARCH_PATHS=${frameworkDir.get().asFile.absolutePath}",
         "build"
     )
 }
