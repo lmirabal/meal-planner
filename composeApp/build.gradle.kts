@@ -11,7 +11,7 @@ configurations.all {
     exclude(group = "org.jetbrains.compose.collection-internal")
     resolutionStrategy.eachDependency {
         if (requested.group == "org.jetbrains.compose.runtime") {
-            useTarget("androidx.compose.runtime:${requested.name}:${libs.versions.composeMultiplatform.get()}")
+            useTarget("androidx.compose.runtime:${requested.name}:${libs.versions.composeRuntime.get()}")
         }
     }
 }
