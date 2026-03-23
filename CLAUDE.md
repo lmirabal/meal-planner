@@ -26,6 +26,22 @@ off, and where they were bought.
 - Platform-specific code is minimal: just `SqlDriver` factory per platform
 - `iosApp/` contains a thin Swift wrapper calling Kotlin's `MainViewController`
 
+## Build & verify
+
+| Goal | Command |
+|---|---|
+| Full verification (compile + tests + Xcode build) | `./gradlew build` |
+| Kotlin/Native unit tests only | `./gradlew iosSimulatorArm64Test` |
+| Xcode build only | `./gradlew verifyXcodeBuild` |
+
+Use `./gradlew build` before committing or after any significant change. Use `./gradlew iosSimulatorArm64Test` after changing Kotlin business logic or tests when the Xcode build is irrelevant. Use `./gradlew verifyXcodeBuild` after touching `iosApp/` Swift files or project configuration.
+
+## Working style
+
+- Before investigating a problem by inspecting jars, decompiling bytecode, or reasoning from first
+  principles, search for the answer first — check official docs, GitHub issues, Stack Overflow, or
+  known library changelogs. Prefer a confirmed known answer over a self-derived one.
+
 ## Code conventions
 
 - No comments in code. If code is unclear, extract a method.

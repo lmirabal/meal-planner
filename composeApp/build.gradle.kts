@@ -1,19 +1,26 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
 }
 
-kotlin {
-    androidTarget {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
+configurations.all {
+    exclude(group = "androidx.lifecycle")
+    exclude(group = "androidx.savedstate")
+    exclude(group = "org.jetbrains.compose.annotation-internal")
+    exclude(group = "org.jetbrains.compose.collection-internal")
+    resolutionStrategy.eachDependency {
+        if (requested.group == "org.jetbrains.compose.runtime") {
+            useTarget("androidx.compose.runtime:${requested.name}:${libs.versions.composeRuntime.get()}")
         }
     }
-    
+}
+
+kotlin {
+    compilerOptions {
+        allWarningsAsErrors = true
+    }
+
     listOf(
         iosArm64(),
         iosSimulatorArm64()
@@ -21,14 +28,11 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
+            binaryOption("bundleId", "dev.mirabal.mealplanner")
         }
     }
-    
+
     sourceSets {
-        androidMain.dependencies {
-            implementation(libs.androidx.activity.compose)
-            implementation(libs.androidx.appcompat)
-        }
         commonMain.dependencies {
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
@@ -45,34 +49,22 @@ kotlin {
     }
 }
 
-android {
-    namespace = "dev.mirabal.mealplanner"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
+val frameworkDir = layout.buildDirectory.dir("bin/iosSimulatorArm64/debugFramework")
 
-    defaultConfig {
-        applicationId = "dev.mirabal.mealplanner"
-        minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
-    }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
-        }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
+val verifyXcodeBuild by tasks.registering(Exec::class) {
+    group = "verification"
+    dependsOn(tasks.named("linkDebugFrameworkIosSimulatorArm64"))
+    environment("OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED", "YES")
+    commandLine(
+        "xcodebuild",
+        "-project", "${rootProject.projectDir}/iosApp/iosApp.xcodeproj",
+        "-scheme", "iosApp",
+        "-destination", "generic/platform=iOS Simulator",
+        "FRAMEWORK_SEARCH_PATHS=${frameworkDir.get().asFile.absolutePath}",
+        "build"
+    )
 }
 
-dependencies {
-    debugImplementation(libs.compose.uiTooling)
+tasks.named("check") {
+    dependsOn(verifyXcodeBuild)
 }
-
