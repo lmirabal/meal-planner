@@ -67,10 +67,8 @@ Use `./gradlew build` before committing or after any significant change. Use `./
 ```
 composeApp/src/
   commonMain/kotlin/
-    model/          # Domain models
-    db/             # Repository interfaces + SQLDelight implementations
-    ui/             # Compose screens and components
-    viewmodel/      # ViewModels
+    shoppinglist/   # Domain model, repository, ViewModel, screen (package-by-feature)
+    App.kt
     AppDependencies.kt
   commonMain/sqldelight/
     ShoppingDatabase.sq
