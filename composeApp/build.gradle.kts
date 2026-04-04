@@ -13,6 +13,7 @@ tasks.withType<KotlinCompilationTask<*>>()
 kotlin {
     compilerOptions {
         allWarningsAsErrors = true
+        optIn.add("kotlin.uuid.ExperimentalUuidApi")
     }
 
     listOf(
@@ -34,10 +35,12 @@ kotlin {
             implementation(libs.compose.components.resources)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+            implementation(libs.kotlinx.datetime)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
             implementation(libs.compose.uiTest)
+            implementation(libs.kotlinx.coroutines.test)
         }
     }
 }

@@ -49,6 +49,18 @@ Use `./gradlew build` before committing or after any significant change. Use `./
 - UUIDs for all primary keys (not auto-increment).
 - `created_at` and `updated_at` timestamps on every entity.
 - Save state immediately after every user action — no batching writes.
+- Prefer tiny types: wrap domain concepts in `value class` (e.g. `ItemId`, `ItemName`, `CreatedAt`,
+  `UpdatedAt`) rather than using raw primitives. This prevents passing values in the wrong order and
+  makes invalid states unrepresentable. No `@JvmInline` — iOS doesn't support it.
+
+## Testing conventions
+
+- Assert full objects using `assertEquals(expected, actual)` rather than checking properties one by
+  one. Constructing the expected object causes a compile error when new fields are added, keeping
+  tests exhaustive. For unpredictable fields (e.g. generated UUIDs), use the actual value from the
+  result: `id = item.id`.
+- Use a `FakeClock` (injectable `Clock` implementation) for deterministic timestamps.
+- Tests live in `commonTest` and run on the iOS simulator via `./gradlew iosSimulatorArm64Test`.
 
 ## Project structure
 
