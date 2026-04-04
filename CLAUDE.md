@@ -10,8 +10,7 @@ off, and where they were bought.
 
 - **Language:** Kotlin (no Swift)
 - **Framework:** Kotlin Multiplatform + Compose Multiplatform
-- **UI components:** compose-cupertino (`cupertino-adaptive`) — renders iOS-native Cupertino widgets
-  on iOS, Material3 on Android
+- **UI components:** Compose Material3 (`androidx.compose.material3`)
 - **Storage:** SQLDelight 2.x (local SQLite, no backend)
 - **State management:** AndroidX ViewModel + Kotlin StateFlow
 - **Navigation:** Official CMP Navigation (`org.jetbrains.androidx.navigation:navigation-compose`)
