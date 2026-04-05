@@ -5,25 +5,21 @@ import dev.mirabal.mealplanner.shoppinglist.model.ItemName
 import dev.mirabal.mealplanner.shoppinglist.model.ShoppingItem
 import dev.mirabal.mealplanner.shoppinglist.model.ShoppingItem.Companion.DEFAULT_LIST_ID
 import dev.mirabal.mealplanner.shoppinglist.model.UpdatedAt
+import dev.mirabal.mealplanner.shoppinglist.testutil.FakeClock
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.time.Instant
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import kotlin.test.AfterTest
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.time.Clock
-import kotlin.time.Instant
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ShoppingListViewModelTest {
-
-    private class FakeClock(val now: Instant) : Clock {
-        override fun now(): Instant = now
-    }
 
     private val testDispatcher = UnconfinedTestDispatcher()
     private val clock = FakeClock(Instant.fromEpochMilliseconds(1_000_000))

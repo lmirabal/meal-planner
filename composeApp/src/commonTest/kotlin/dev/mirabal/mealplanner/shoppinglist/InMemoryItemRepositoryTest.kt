@@ -5,19 +5,15 @@ import dev.mirabal.mealplanner.shoppinglist.model.ItemName
 import dev.mirabal.mealplanner.shoppinglist.model.ShoppingItem
 import dev.mirabal.mealplanner.shoppinglist.model.ShoppingItem.Companion.DEFAULT_LIST_ID
 import dev.mirabal.mealplanner.shoppinglist.model.UpdatedAt
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.test.runTest
-import kotlin.time.Clock
-import kotlin.time.Instant
+import dev.mirabal.mealplanner.shoppinglist.testutil.FakeClock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.time.Instant
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.runTest
 
 class InMemoryItemRepositoryTest {
-
-    private class FakeClock(var now: Instant) : Clock {
-        override fun now(): Instant = now
-    }
 
     private val clock = FakeClock(Instant.fromEpochMilliseconds(1_000_000))
     private val repository = InMemoryItemRepository(clock)
