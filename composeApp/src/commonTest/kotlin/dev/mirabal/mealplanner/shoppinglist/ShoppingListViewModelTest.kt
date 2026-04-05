@@ -13,6 +13,7 @@ import kotlin.test.assertEquals
 import kotlin.time.Instant
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -50,8 +51,9 @@ class ShoppingListViewModelTest {
     }
 
     @Test
-    fun onAddClickedAddsItemAndClearsInput() = runTest {
-        viewModel.onInputChanged("Milk")
+    fun onAddClickedAddsItemAndClearsInput() = runTest(testDispatcher) {
+        viewModel.items.launchIn(backgroundScope)
+        viewModel.onInputChanged("  Milk  ")
         viewModel.onAddClicked()
 
         val item = viewModel.items.value.first()
@@ -71,12 +73,14 @@ class ShoppingListViewModelTest {
 
     @Test
     fun onAddClickedWithBlankInputIsNoOp() = runTest {
+        viewModel.onInputChanged("   ")
         viewModel.onAddClicked()
         assertEquals(emptyList(), viewModel.items.value)
     }
 
     @Test
-    fun multipleAddsAreNewestFirst() = runTest {
+    fun multipleAddsAreNewestFirst() = runTest(testDispatcher) {
+        viewModel.items.launchIn(backgroundScope)
         viewModel.onInputChanged("Eggs")
         viewModel.onAddClicked()
         viewModel.onInputChanged("Butter")

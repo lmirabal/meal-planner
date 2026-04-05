@@ -14,17 +14,17 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShoppingListScreen(viewModel: ShoppingListViewModel) {
-    val items by viewModel.items.collectAsState()
-    val inputText by viewModel.inputText.collectAsState()
+internal fun ShoppingListScreen(viewModel: ShoppingListViewModel) {
+    val items by viewModel.items.collectAsStateWithLifecycle()
+    val inputText by viewModel.inputText.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = { TopAppBar(title = { Text("Shopping List") }) }
@@ -56,7 +56,7 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel) {
                     }
                 }
             }
-            items(items) { item ->
+            items(items, key = { it.id.value.toString() }) { item ->
                 ListItem(headlineContent = { Text(item.name.value) })
             }
         }

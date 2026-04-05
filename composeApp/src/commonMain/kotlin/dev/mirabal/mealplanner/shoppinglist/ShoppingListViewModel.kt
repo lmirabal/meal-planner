@@ -10,12 +10,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class ShoppingListViewModel(
+internal class ShoppingListViewModel(
     private val repository: ItemRepository,
 ) : ViewModel() {
 
     val items: StateFlow<List<ShoppingItem>> = repository.getAll()
-        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
     private val _inputText = MutableStateFlow("")
     val inputText: StateFlow<String> = _inputText
@@ -25,11 +25,11 @@ class ShoppingListViewModel(
     }
 
     fun onAddClicked() {
-        val text = _inputText.value
-        if (text.isBlank()) return
+        val text = _inputText.value.trim()
+        if (text.isEmpty()) return
         viewModelScope.launch {
             repository.add(ItemName(text))
+            _inputText.value = ""
         }
-        _inputText.value = ""
     }
 }
