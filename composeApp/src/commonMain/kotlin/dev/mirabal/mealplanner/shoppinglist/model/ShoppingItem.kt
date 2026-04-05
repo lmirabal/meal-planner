@@ -5,7 +5,10 @@ import kotlin.uuid.Uuid
 
 value class ItemId(val value: Uuid)
 value class ItemName(val value: String) {
-    init { require(value.isNotBlank()) }
+    init {
+        require(value.isNotBlank())
+        require(value == value.trim())
+    }
 }
 value class ListId(val value: Uuid)
 value class CreatedAt(val value: Instant)

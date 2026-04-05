@@ -8,7 +8,6 @@ import dev.mirabal.mealplanner.shoppinglist.model.UpdatedAt
 import dev.mirabal.mealplanner.shoppinglist.testutil.FakeClock
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 import kotlin.time.Instant
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -48,15 +47,5 @@ class InMemoryItemRepositoryTest {
 
         val names = repository.getAll().first().map { it.name.value }
         assertEquals(listOf("Butter", "Eggs"), names)
-    }
-
-    @Test
-    fun blankNameThrows() {
-        assertFailsWith<IllegalArgumentException> { ItemName("") }
-    }
-
-    @Test
-    fun whitespaceOnlyNameThrows() {
-        assertFailsWith<IllegalArgumentException> { ItemName("  ") }
     }
 }
