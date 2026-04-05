@@ -13,13 +13,13 @@ import kotlin.test.Test
 @OptIn(ExperimentalTestApi::class)
 class ShoppingListScreenTest {
 
-    private fun makeViewModel() = ShoppingListViewModel(InMemoryItemRepository())
+    private val viewModel = ShoppingListViewModel(itemRepository())
 
     @Test
     fun showsEmptyStateInitially() = runComposeUiTest {
         setContent {
             MaterialTheme {
-                ShoppingListScreen(makeViewModel())
+                ShoppingListScreen(viewModel)
             }
         }
 
@@ -31,7 +31,7 @@ class ShoppingListScreenTest {
     fun addButtonDisabledWhenInputEmpty() = runComposeUiTest {
         setContent {
             MaterialTheme {
-                ShoppingListScreen(makeViewModel())
+                ShoppingListScreen(viewModel)
             }
         }
 
@@ -42,7 +42,7 @@ class ShoppingListScreenTest {
     fun typeAndTapAddShowsItemInList() = runComposeUiTest {
         setContent {
             MaterialTheme {
-                ShoppingListScreen(makeViewModel())
+                ShoppingListScreen(viewModel)
             }
         }
 

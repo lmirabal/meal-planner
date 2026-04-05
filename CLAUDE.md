@@ -21,6 +21,11 @@ off, and where they were bought.
 ## Architecture
 
 - MVVM: Screen (Composable) → ViewModel (StateFlow) → Repository (interface) → SQLDelight
+- Screens receive a ViewModel, never a repository or other dependency directly. ViewModel
+  construction (`viewModel { }`) belongs at the wiring layer (`App.kt` or the navigation graph),
+  not inside the screen composable.
+- `internal` is for concrete implementations (e.g. `InMemoryItemRepository`). Interfaces and
+  ViewModels that external callers need are public.
 - Single `composeApp` module with `commonMain`, `androidMain`, `iosMain` source sets
 - Platform-specific code is minimal: just `SqlDriver` factory per platform
 - `iosApp/` contains a thin Swift wrapper calling Kotlin's `MainViewController`

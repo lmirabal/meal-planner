@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-internal class ShoppingListViewModel(
+class ShoppingListViewModel(
     private val repository: ItemRepository,
 ) : ViewModel() {
 
