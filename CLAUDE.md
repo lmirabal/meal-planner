@@ -21,6 +21,11 @@ off, and where they were bought.
 ## Architecture
 
 - MVVM: Screen (Composable) → ViewModel (StateFlow) → Repository (interface) → SQLDelight
+- Screens receive a ViewModel, never a repository or other dependency directly. ViewModel
+  construction (`viewModel { }`) belongs at the wiring layer (`App.kt` or the navigation graph),
+  not inside the screen composable.
+- `internal` is for concrete implementations (e.g. `InMemoryItemRepository`). Interfaces and
+  ViewModels that external callers need are public.
 - Single `composeApp` module with `commonMain`, `androidMain`, `iosMain` source sets
 - Platform-specific code is minimal: just `SqlDriver` factory per platform
 - `iosApp/` contains a thin Swift wrapper calling Kotlin's `MainViewController`
@@ -49,16 +54,26 @@ Use `./gradlew build` before committing or after any significant change. Use `./
 - UUIDs for all primary keys (not auto-increment).
 - `created_at` and `updated_at` timestamps on every entity.
 - Save state immediately after every user action — no batching writes.
+- Prefer tiny types: wrap domain concepts in `value class` (e.g. `ItemId`, `ItemName`, `CreatedAt`,
+  `UpdatedAt`) rather than using raw primitives. This prevents passing values in the wrong order and
+  makes invalid states unrepresentable. No `@JvmInline` — iOS doesn't support it.
+
+## Testing conventions
+
+- Assert full objects using `assertEquals(expected, actual)` rather than checking properties one by
+  one. Constructing the expected object causes a compile error when new fields are added, keeping
+  tests exhaustive. For unpredictable fields (e.g. generated UUIDs), use the actual value from the
+  result: `id = item.id`.
+- Use a `FakeClock` (injectable `Clock` implementation) for deterministic timestamps.
+- Tests live in `commonTest` and run on the iOS simulator via `./gradlew iosSimulatorArm64Test`.
 
 ## Project structure
 
 ```
 composeApp/src/
   commonMain/kotlin/
-    model/          # Domain models
-    db/             # Repository interfaces + SQLDelight implementations
-    ui/             # Compose screens and components
-    viewmodel/      # ViewModels
+    shoppinglist/   # Domain model, repository, ViewModel, screen (package-by-feature)
+    App.kt
     AppDependencies.kt
   commonMain/sqldelight/
     ShoppingDatabase.sq
