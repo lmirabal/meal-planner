@@ -7,6 +7,7 @@ import dev.mirabal.mealplanner.shoppinglist.model.ShoppingItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -18,7 +19,7 @@ class ShoppingListViewModel(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
     private val _inputText = MutableStateFlow("")
-    val inputText: StateFlow<String> = _inputText
+    val inputText: StateFlow<String> = _inputText.asStateFlow()
 
     fun onInputChanged(text: String) {
         _inputText.value = text

@@ -8,6 +8,7 @@ import dev.mirabal.mealplanner.shoppinglist.model.ShoppingItem.Companion.DEFAULT
 import dev.mirabal.mealplanner.shoppinglist.model.UpdatedAt
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlin.time.Clock
 import kotlin.uuid.Uuid
@@ -18,7 +19,7 @@ internal class InMemoryItemRepository(
 
     private val items = MutableStateFlow<List<ShoppingItem>>(emptyList())
 
-    override fun getAll(): Flow<List<ShoppingItem>> = items
+    override fun getAll(): Flow<List<ShoppingItem>> = items.asStateFlow()
 
     override suspend fun add(name: ItemName) {
         val now = clock.now()
