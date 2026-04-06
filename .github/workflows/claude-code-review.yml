@@ -3,7 +3,6 @@ on:
   pull_request:
     types: [opened, synchronize]
     paths-ignore:
-      - '**/*.md'
       - 'docs/**'
 
 jobs:
@@ -26,13 +25,31 @@ jobs:
             REPO: ${{ github.repository }}
             PR NUMBER: ${{ github.event.pull_request.number }}
 
-            Review this PR for a Kotlin Multiplatform + Compose Multiplatform app. Focus on:
-            - Code quality and correctness
-            - KMP/Compose best practices
-            - Potential bugs or issues
-            - CLAUDE.md conventions (no comments, UUIDs for PKs, IO dispatcher for DB, etc.)
+            This is a Kotlin Multiplatform + Compose Multiplatform app that targets iOS ONLY.
+            There is no Android production target. Do NOT flag Android-specific issues.
+
+            Before reviewing, read the project conventions with: cat CLAUDE.md
+
+            Review the PR diff and focus ONLY on:
+            - Correctness bugs (logic errors, race conditions, data loss)
+            - KMP/Compose Multiplatform best-practice violations
+            - CLAUDE.md convention violations:
+                - Comments added to code
+                - Non-UUID primary keys
+                - DB operations not on Dispatchers.IO
+                - Domain primitives missing value class wrapping
+                - ViewModel constructed inside a Screen composable
+                - Repository/dependency injected directly into a Screen
+
+            Do NOT flag:
+            - Android-specific APIs, patterns, or lifecycle concerns
+            - Missing @JvmInline (not supported on iOS)
+            - Missing Android instrumented tests
+            - Style nits already covered by the compiler or linter
+
+            If there are no real issues to raise, post nothing.
 
             Use `gh pr comment` for top-level feedback.
             Use `mcp__github_inline_comment__create_inline_comment` (with `confirmed: true`) for specific code issues.
-            Only post GitHub comments — don't output review text as messages.
-          claude_args: --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*)"
+            Only post GitHub comments — do not output review text as messages.
+          claude_args: --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(cat CLAUDE.md)"
