@@ -13,7 +13,7 @@ import kotlin.test.Test
 @OptIn(ExperimentalTestApi::class)
 class ShoppingListScreenTest {
 
-    private val viewModel = ShoppingListViewModel(itemRepository())
+    private val viewModel = ShoppingListViewModel(InMemoryItemRepository())
 
     @Test
     fun showsEmptyStateInitially() = runComposeUiTest {
