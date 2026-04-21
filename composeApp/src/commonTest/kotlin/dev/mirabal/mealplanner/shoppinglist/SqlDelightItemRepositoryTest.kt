@@ -1,8 +1,5 @@
 package dev.mirabal.mealplanner.shoppinglist
 
-import app.cash.sqldelight.driver.native.NativeSqliteDriver
-import app.cash.sqldelight.driver.native.wrapConnection
-import co.touchlab.sqliter.DatabaseConfiguration
 import dev.mirabal.mealplanner.db.ShoppingDatabase
 import dev.mirabal.mealplanner.shoppinglist.model.CreatedAt
 import dev.mirabal.mealplanner.shoppinglist.model.ItemName
@@ -10,10 +7,10 @@ import dev.mirabal.mealplanner.shoppinglist.model.ShoppingItem
 import dev.mirabal.mealplanner.shoppinglist.model.ShoppingItem.Companion.DEFAULT_LIST_ID
 import dev.mirabal.mealplanner.shoppinglist.model.UpdatedAt
 import dev.mirabal.mealplanner.shoppinglist.testutil.FakeClock
+import dev.mirabal.mealplanner.shoppinglist.testutil.createTestSqlDriver
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Instant
-import kotlin.uuid.Uuid
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 
@@ -22,22 +19,7 @@ class SqlDelightItemRepositoryTest {
     private val clock = FakeClock(Instant.fromEpochMilliseconds(1_000_000))
 
     private fun createRepository(): SqlDelightItemRepository {
-        val schema = ShoppingDatabase.Schema
-        val driver = NativeSqliteDriver(
-            DatabaseConfiguration(
-                name = "test-${Uuid.random()}.db",
-                version = schema.version.toInt(),
-                create = { connection ->
-                    wrapConnection(connection) { schema.create(it) }
-                },
-                upgrade = { connection, oldVersion, newVersion ->
-                    wrapConnection(connection) {
-                        schema.migrate(it, oldVersion.toLong(), newVersion.toLong())
-                    }
-                },
-                inMemory = true,
-            )
-        )
+        val driver = createTestSqlDriver(ShoppingDatabase.Schema)
         return SqlDelightItemRepository(ShoppingDatabase(driver), clock)
     }
 
