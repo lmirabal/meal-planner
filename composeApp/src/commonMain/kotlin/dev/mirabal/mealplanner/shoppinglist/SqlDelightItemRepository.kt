@@ -48,6 +48,8 @@ internal class SqlDelightItemRepository(
     }
 }
 
+fun itemRepository(database: ShoppingDatabase): ItemRepository = SqlDelightItemRepository(database)
+
 private fun DbShoppingItem.toDomain() = ShoppingItem(
     id = ItemId(Uuid.parse(id)),
     listId = ListId(Uuid.parse(list_id)),
