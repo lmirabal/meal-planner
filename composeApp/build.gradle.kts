@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.sqldelight)
 }
 
 tasks.withType<KotlinCompilationTask<*>>()
@@ -34,11 +35,23 @@ kotlin {
             implementation(libs.compose.ui)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+            implementation(libs.sqldelight.coroutinesExtensions)
+        }
+        iosMain.dependencies {
+            implementation(libs.sqldelight.nativeDriver)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
             implementation(libs.compose.uiTest)
             implementation(libs.kotlinx.coroutines.test)
+        }
+    }
+}
+
+sqldelight {
+    databases {
+        create("ShoppingDatabase") {
+            packageName.set("dev.mirabal.mealplanner.db")
         }
     }
 }
@@ -55,6 +68,7 @@ val verifyXcodeBuild by tasks.registering(Exec::class) {
         "-scheme", "iosApp",
         "-destination", "generic/platform=iOS Simulator",
         "FRAMEWORK_SEARCH_PATHS=${frameworkDir.get().asFile.absolutePath}",
+        "OTHER_LDFLAGS=\$(inherited) -lsqlite3",
         "build"
     )
 }

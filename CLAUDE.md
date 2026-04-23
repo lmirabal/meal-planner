@@ -26,8 +26,11 @@ off, and where they were bought.
   not inside the screen composable.
 - `internal` is for concrete implementations (e.g. `InMemoryItemRepository`). Interfaces and
   ViewModels that external callers need are public. The public API surface of a feature package is:
-  the repository *interface*, its factory function (e.g. `fun itemRepository(): ItemRepository` in
-  the interface file), and the ViewModel. The screen composable is `internal`.
+  the repository *interface*, its factory function, and the ViewModel. The factory function lives in
+  the interface file when it is parameter-free (e.g. `fun itemRepository(): ItemRepository`); when
+  it requires a storage-layer type (e.g. `ShoppingDatabase`), it lives in the implementation file
+  instead to avoid coupling the interface to an implementation detail. The screen composable is
+  `internal`.
 - Single `composeApp` module with `commonMain`, `androidMain`, `iosMain` source sets
 - Platform-specific code is minimal: just `SqlDriver` factory per platform
 - `iosApp/` contains a thin Swift wrapper calling Kotlin's `MainViewController`
