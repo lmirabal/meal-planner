@@ -9,8 +9,8 @@ CREATE TABLE ShoppingItem (
 );
 
 insertItem:
-INSERT INTO ShoppingItem (id, list_id, name, checked, created_at, updated_at)
-VALUES (?, ?, ?, ?, ?, ?);
+INSERT INTO ShoppingItem (id, list_id, name, quantity, checked, created_at, updated_at)
+VALUES (?, ?, ?, ?, ?, ?, ?);
 
 selectAllItems:
 SELECT * FROM ShoppingItem

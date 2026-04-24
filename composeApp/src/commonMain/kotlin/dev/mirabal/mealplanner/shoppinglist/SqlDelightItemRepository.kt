@@ -41,6 +41,7 @@ internal class SqlDelightItemRepository(
                 id = Uuid.random().toString(),
                 list_id = DEFAULT_LIST_ID.value.toString(),
                 name = name.value,
+                quantity = quantity?.serialize(),
                 checked = 0L,
                 created_at = now.toEpochMilliseconds(),
                 updated_at = now.toEpochMilliseconds(),
