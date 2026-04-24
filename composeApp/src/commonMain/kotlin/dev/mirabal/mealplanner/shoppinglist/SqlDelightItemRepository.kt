@@ -34,7 +34,7 @@ internal class SqlDelightItemRepository(
             .mapToList(Dispatchers.IO)
             .map { dbItems -> dbItems.map { it.toDomain() } }
 
-    override suspend fun add(name: ItemName) {
+    override suspend fun add(name: ItemName, quantity: Quantity?) {
         val now = clock.now()
         withContext(Dispatchers.IO) {
             queries.insertItem(

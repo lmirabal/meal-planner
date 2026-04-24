@@ -3,6 +3,7 @@ package dev.mirabal.mealplanner.shoppinglist
 import dev.mirabal.mealplanner.shoppinglist.model.CreatedAt
 import dev.mirabal.mealplanner.shoppinglist.model.ItemId
 import dev.mirabal.mealplanner.shoppinglist.model.ItemName
+import dev.mirabal.mealplanner.shoppinglist.model.Quantity
 import dev.mirabal.mealplanner.shoppinglist.model.ShoppingItem
 import dev.mirabal.mealplanner.shoppinglist.model.ShoppingItem.Companion.DEFAULT_LIST_ID
 import dev.mirabal.mealplanner.shoppinglist.model.UpdatedAt
@@ -21,13 +22,13 @@ internal class InMemoryItemRepository(
 
     override fun getAll(): Flow<List<ShoppingItem>> = items.asStateFlow()
 
-    override suspend fun add(name: ItemName) {
+    override suspend fun add(name: ItemName, quantity: Quantity?) {
         val now = clock.now()
         val item = ShoppingItem(
             id = ItemId(Uuid.random()),
             listId = DEFAULT_LIST_ID,
             name = name,
-            quantity = null,
+            quantity = quantity,
             checked = false,
             createdAt = CreatedAt(now),
             updatedAt = UpdatedAt(now),
