@@ -32,6 +32,7 @@ class InMemoryItemRepositoryTest {
                 id = item.id,
                 listId = DEFAULT_LIST_ID,
                 name = ItemName("Milk"),
+                quantity = null,
                 checked = false,
                 createdAt = CreatedAt(clock.now),
                 updatedAt = UpdatedAt(clock.now),

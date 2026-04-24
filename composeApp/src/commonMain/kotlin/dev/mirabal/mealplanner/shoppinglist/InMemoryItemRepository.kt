@@ -27,6 +27,7 @@ internal class InMemoryItemRepository(
             id = ItemId(Uuid.random()),
             listId = DEFAULT_LIST_ID,
             name = name,
+            quantity = null,
             checked = false,
             createdAt = CreatedAt(now),
             updatedAt = UpdatedAt(now),

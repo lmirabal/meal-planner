@@ -7,6 +7,7 @@ import dev.mirabal.mealplanner.shoppinglist.model.CreatedAt
 import dev.mirabal.mealplanner.shoppinglist.model.ItemId
 import dev.mirabal.mealplanner.shoppinglist.model.ItemName
 import dev.mirabal.mealplanner.shoppinglist.model.ListId
+import dev.mirabal.mealplanner.shoppinglist.model.Quantity
 import dev.mirabal.mealplanner.shoppinglist.model.ShoppingItem
 import dev.mirabal.mealplanner.shoppinglist.model.ShoppingItem.Companion.DEFAULT_LIST_ID
 import dev.mirabal.mealplanner.shoppinglist.model.UpdatedAt
@@ -54,6 +55,7 @@ private fun DbShoppingItem.toDomain() = ShoppingItem(
     id = ItemId(Uuid.parse(id)),
     listId = ListId(Uuid.parse(list_id)),
     name = ItemName(name),
+    quantity = quantity?.let { Quantity.parse(it) },
     checked = checked != 0L,
     createdAt = CreatedAt(Instant.fromEpochMilliseconds(created_at)),
     updatedAt = UpdatedAt(Instant.fromEpochMilliseconds(updated_at)),

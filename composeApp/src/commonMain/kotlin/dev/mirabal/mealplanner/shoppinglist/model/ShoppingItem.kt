@@ -18,6 +18,7 @@ data class ShoppingItem(
     val id: ItemId,
     val listId: ListId,
     val name: ItemName,
+    val quantity: Quantity?,
     val checked: Boolean,
     val createdAt: CreatedAt,
     val updatedAt: UpdatedAt,
