@@ -37,11 +37,11 @@ Each slice has its own implementation plan, written and executed sequentially.
 `composeApp/src/commonMain/kotlin/dev/mirabal/mealplanner/shoppinglist/model/Quantity.kt`
 
 ```kotlin
-sealed class Quantity {
-    data class WholeNumber(val value: Int) : Quantity() {
+sealed interface Quantity {
+    data class WholeNumber(val value: Int) : Quantity {
         init { require(value > 0) }
     }
-    data class Fraction(val numerator: Int, val denominator: Int) : Quantity() {
+    data class Fraction(val numerator: Int, val denominator: Int) : Quantity {
         init {
             require(numerator > 0)
             require(denominator > 0)
@@ -54,7 +54,7 @@ sealed class Quantity {
             }
         }
     }
-    data class Decimal(val value: Double) : Quantity() {
+    data class Decimal(val value: Double) : Quantity {
         init { require(value > 0) }
         // 2dp enforced at parse time (count chars after '.' in raw string, not via float arithmetic)
     }
