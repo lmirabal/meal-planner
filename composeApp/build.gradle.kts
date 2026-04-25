@@ -68,7 +68,6 @@ val verifyXcodeBuild by tasks.registering(Exec::class) {
         "-scheme", "iosApp",
         "-destination", "generic/platform=iOS Simulator",
         "FRAMEWORK_SEARCH_PATHS=${frameworkDir.get().asFile.absolutePath}",
-        "OTHER_LDFLAGS=\$(inherited) -lsqlite3",
         "build"
     )
 }
