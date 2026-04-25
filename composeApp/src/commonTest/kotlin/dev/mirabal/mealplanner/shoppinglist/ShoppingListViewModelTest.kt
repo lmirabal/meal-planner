@@ -1,10 +1,6 @@
 package dev.mirabal.mealplanner.shoppinglist
 
-import dev.mirabal.mealplanner.shoppinglist.model.CreatedAt
 import dev.mirabal.mealplanner.shoppinglist.model.ItemName
-import dev.mirabal.mealplanner.shoppinglist.model.ShoppingItem
-import dev.mirabal.mealplanner.shoppinglist.model.ShoppingItem.Companion.DEFAULT_LIST_ID
-import dev.mirabal.mealplanner.shoppinglist.model.UpdatedAt
 import dev.mirabal.mealplanner.shoppinglist.testutil.FakeClock
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -57,18 +53,9 @@ class ShoppingListViewModelTest {
         viewModel.onAddClicked()
 
         val item = viewModel.items.value.first()
-        assertEquals(
-            ShoppingItem(
-                id = item.id,
-                listId = DEFAULT_LIST_ID,
-                name = ItemName("Milk"),
-                checked = false,
-                createdAt = CreatedAt(clock.now),
-                updatedAt = UpdatedAt(clock.now),
-            ),
-            item,
-        )
+        assertEquals(ShoppingListUiItem(id = item.id, label = "Milk"), item)
         assertEquals("", viewModel.inputText.value)
+        assertEquals("", viewModel.quantityInput.value)
     }
 
     @Test
@@ -86,7 +73,59 @@ class ShoppingListViewModelTest {
         viewModel.onInputChanged("Butter")
         viewModel.onAddClicked()
 
-        val names = viewModel.items.value.map { it.name.value }
-        assertEquals(listOf("Butter", "Eggs"), names)
+        val labels = viewModel.items.value.map { it.label }
+        assertEquals(listOf("Butter", "Eggs"), labels)
+    }
+
+    @Test
+    fun initialCanAddIsFalse() = runTest(testDispatcher) {
+        viewModel.canAdd.launchIn(backgroundScope)
+        assertEquals(false, viewModel.canAdd.value)
+    }
+
+    @Test
+    fun canAddIsTrueWhenNameFilledAndQuantityBlank() = runTest(testDispatcher) {
+        viewModel.canAdd.launchIn(backgroundScope)
+        viewModel.onInputChanged("Milk")
+        assertEquals(true, viewModel.canAdd.value)
+    }
+
+    @Test
+    fun canAddIsFalseWhenQuantityInputIsInvalid() = runTest(testDispatcher) {
+        viewModel.canAdd.launchIn(backgroundScope)
+        viewModel.onInputChanged("Milk")
+        viewModel.onQuantityChanged("abc")
+        assertEquals(false, viewModel.canAdd.value)
+    }
+
+    @Test
+    fun canAddIsTrueWhenNameFilledAndQuantityValid() = runTest(testDispatcher) {
+        viewModel.canAdd.launchIn(backgroundScope)
+        viewModel.onInputChanged("Lemons")
+        viewModel.onQuantityChanged("3")
+        assertEquals(true, viewModel.canAdd.value)
+    }
+
+    @Test
+    fun onAddClickedWithQuantityStoresQuantityAndClearsFields() = runTest(testDispatcher) {
+        viewModel.items.launchIn(backgroundScope)
+        viewModel.onInputChanged("Lemons")
+        viewModel.onQuantityChanged("3")
+        viewModel.onAddClicked()
+
+        val item = viewModel.items.value.first()
+        assertEquals(ShoppingListUiItem(id = item.id, label = "3 Lemons"), item)
+        assertEquals("", viewModel.inputText.value)
+        assertEquals("", viewModel.quantityInput.value)
+    }
+
+    @Test
+    fun onAddClickedWithInvalidQuantityIsNoOp() = runTest(testDispatcher) {
+        viewModel.items.launchIn(backgroundScope)
+        viewModel.onInputChanged("Lemons")
+        viewModel.onQuantityChanged("abc")
+        viewModel.onAddClicked()
+
+        assertEquals(emptyList(), viewModel.items.value)
     }
 }

@@ -1,3 +1,5 @@
+DROP TABLE ShoppingItem;
+
 CREATE TABLE ShoppingItem (
     id TEXT NOT NULL PRIMARY KEY,
     list_id TEXT NOT NULL,
@@ -7,11 +9,3 @@ CREATE TABLE ShoppingItem (
     created_at INTEGER NOT NULL,
     updated_at INTEGER NOT NULL
 );
-
-insertItem:
-INSERT INTO ShoppingItem (id, list_id, name, quantity, checked, created_at, updated_at)
-VALUES (?, ?, ?, ?, ?, ?, ?);
-
-selectAllItems:
-SELECT * FROM ShoppingItem
-ORDER BY created_at DESC, rowid DESC;

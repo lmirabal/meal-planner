@@ -3,6 +3,7 @@ package dev.mirabal.mealplanner.shoppinglist
 import dev.mirabal.mealplanner.db.ShoppingDatabase
 import dev.mirabal.mealplanner.shoppinglist.model.CreatedAt
 import dev.mirabal.mealplanner.shoppinglist.model.ItemName
+import dev.mirabal.mealplanner.shoppinglist.model.Quantity
 import dev.mirabal.mealplanner.shoppinglist.model.ShoppingItem
 import dev.mirabal.mealplanner.shoppinglist.model.ShoppingItem.Companion.DEFAULT_LIST_ID
 import dev.mirabal.mealplanner.shoppinglist.model.UpdatedAt
@@ -40,6 +41,7 @@ class SqlDelightItemRepositoryTest {
                 id = item.id,
                 listId = DEFAULT_LIST_ID,
                 name = ItemName("Milk"),
+                quantity = null,
                 checked = false,
                 createdAt = CreatedAt(clock.now),
                 updatedAt = UpdatedAt(clock.now),
@@ -57,5 +59,14 @@ class SqlDelightItemRepositoryTest {
 
         val names = repository.getAll().first().map { it.name.value }
         assertEquals(listOf("Butter", "Eggs"), names)
+    }
+
+    @Test
+    fun addWithQuantityPersistsAndRetrievesQuantity() = runTest {
+        val repository = createRepository()
+        repository.add(ItemName("Lemons"), Quantity.WholeNumber(3))
+
+        val item = repository.getAll().first().first()
+        assertEquals(Quantity.WholeNumber(3), item.quantity)
     }
 }

@@ -7,6 +7,7 @@ import dev.mirabal.mealplanner.shoppinglist.model.CreatedAt
 import dev.mirabal.mealplanner.shoppinglist.model.ItemId
 import dev.mirabal.mealplanner.shoppinglist.model.ItemName
 import dev.mirabal.mealplanner.shoppinglist.model.ListId
+import dev.mirabal.mealplanner.shoppinglist.model.Quantity
 import dev.mirabal.mealplanner.shoppinglist.model.ShoppingItem
 import dev.mirabal.mealplanner.shoppinglist.model.ShoppingItem.Companion.DEFAULT_LIST_ID
 import dev.mirabal.mealplanner.shoppinglist.model.UpdatedAt
@@ -33,13 +34,14 @@ internal class SqlDelightItemRepository(
             .mapToList(Dispatchers.IO)
             .map { dbItems -> dbItems.map { it.toDomain() } }
 
-    override suspend fun add(name: ItemName) {
+    override suspend fun add(name: ItemName, quantity: Quantity?) {
         val now = clock.now()
         withContext(Dispatchers.IO) {
             queries.insertItem(
                 id = Uuid.random().toString(),
                 list_id = DEFAULT_LIST_ID.value.toString(),
                 name = name.value,
+                quantity = quantity?.serialize(),
                 checked = 0L,
                 created_at = now.toEpochMilliseconds(),
                 updated_at = now.toEpochMilliseconds(),
@@ -54,6 +56,7 @@ private fun DbShoppingItem.toDomain() = ShoppingItem(
     id = ItemId(Uuid.parse(id)),
     listId = ListId(Uuid.parse(list_id)),
     name = ItemName(name),
+    quantity = quantity?.let { requireNotNull(Quantity.parse(it)) { "Unrecognised quantity in DB: $it" } },
     checked = checked != 0L,
     createdAt = CreatedAt(Instant.fromEpochMilliseconds(created_at)),
     updatedAt = UpdatedAt(Instant.fromEpochMilliseconds(updated_at)),
