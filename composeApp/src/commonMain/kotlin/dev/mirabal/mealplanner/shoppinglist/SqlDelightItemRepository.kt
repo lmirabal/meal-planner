@@ -56,7 +56,7 @@ private fun DbShoppingItem.toDomain() = ShoppingItem(
     id = ItemId(Uuid.parse(id)),
     listId = ListId(Uuid.parse(list_id)),
     name = ItemName(name),
-    quantity = quantity?.let { Quantity.parse(it) },
+    quantity = quantity?.let { requireNotNull(Quantity.parse(it)) { "Unrecognised quantity in DB: $it" } },
     checked = checked != 0L,
     createdAt = CreatedAt(Instant.fromEpochMilliseconds(created_at)),
     updatedAt = UpdatedAt(Instant.fromEpochMilliseconds(updated_at)),
