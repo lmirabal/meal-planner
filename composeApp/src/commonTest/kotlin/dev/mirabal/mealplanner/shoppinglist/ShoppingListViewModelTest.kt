@@ -2,6 +2,7 @@ package dev.mirabal.mealplanner.shoppinglist
 
 import dev.mirabal.mealplanner.shoppinglist.model.CreatedAt
 import dev.mirabal.mealplanner.shoppinglist.model.ItemName
+import dev.mirabal.mealplanner.shoppinglist.model.Quantity
 import dev.mirabal.mealplanner.shoppinglist.model.ShoppingItem
 import dev.mirabal.mealplanner.shoppinglist.model.ShoppingItem.Companion.DEFAULT_LIST_ID
 import dev.mirabal.mealplanner.shoppinglist.model.UpdatedAt
@@ -70,6 +71,7 @@ class ShoppingListViewModelTest {
             item,
         )
         assertEquals("", viewModel.inputText.value)
+        assertEquals("", viewModel.quantityInput.value)
     }
 
     @Test
@@ -89,5 +91,57 @@ class ShoppingListViewModelTest {
 
         val names = viewModel.items.value.map { it.name.value }
         assertEquals(listOf("Butter", "Eggs"), names)
+    }
+
+    @Test
+    fun initialCanAddIsFalse() = runTest(testDispatcher) {
+        viewModel.canAdd.launchIn(backgroundScope)
+        assertEquals(false, viewModel.canAdd.value)
+    }
+
+    @Test
+    fun canAddIsTrueWhenNameFilledAndQuantityBlank() = runTest(testDispatcher) {
+        viewModel.canAdd.launchIn(backgroundScope)
+        viewModel.onInputChanged("Milk")
+        assertEquals(true, viewModel.canAdd.value)
+    }
+
+    @Test
+    fun canAddIsFalseWhenQuantityInputIsInvalid() = runTest(testDispatcher) {
+        viewModel.canAdd.launchIn(backgroundScope)
+        viewModel.onInputChanged("Milk")
+        viewModel.onQuantityChanged("abc")
+        assertEquals(false, viewModel.canAdd.value)
+    }
+
+    @Test
+    fun canAddIsTrueWhenNameFilledAndQuantityValid() = runTest(testDispatcher) {
+        viewModel.canAdd.launchIn(backgroundScope)
+        viewModel.onInputChanged("Lemons")
+        viewModel.onQuantityChanged("3")
+        assertEquals(true, viewModel.canAdd.value)
+    }
+
+    @Test
+    fun onAddClickedWithQuantityStoresQuantityAndClearsFields() = runTest(testDispatcher) {
+        viewModel.items.launchIn(backgroundScope)
+        viewModel.onInputChanged("Lemons")
+        viewModel.onQuantityChanged("3")
+        viewModel.onAddClicked()
+
+        val item = viewModel.items.value.first()
+        assertEquals(Quantity.WholeNumber(3), item.quantity)
+        assertEquals("", viewModel.inputText.value)
+        assertEquals("", viewModel.quantityInput.value)
+    }
+
+    @Test
+    fun onAddClickedWithInvalidQuantityIsNoOp() = runTest(testDispatcher) {
+        viewModel.items.launchIn(backgroundScope)
+        viewModel.onInputChanged("Lemons")
+        viewModel.onQuantityChanged("abc")
+        viewModel.onAddClicked()
+
+        assertEquals(emptyList(), viewModel.items.value)
     }
 }
