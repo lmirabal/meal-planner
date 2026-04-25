@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -17,7 +18,8 @@ class ShoppingListViewModel(
     private val repository: ItemRepository,
 ) : ViewModel() {
 
-    val items: StateFlow<List<ShoppingItem>> = repository.getAll()
+    val items: StateFlow<List<ShoppingListUiItem>> = repository.getAll()
+        .map { items -> items.map { it.toUiItem() } }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
     private val _inputText = MutableStateFlow("")
@@ -50,3 +52,11 @@ class ShoppingListViewModel(
         }
     }
 }
+
+private fun ShoppingItem.toUiItem() = ShoppingListUiItem(
+    id = id.value.toString(),
+    label = when (val q = quantity) {
+        is Quantity.WholeNumber -> "${q.value} ${name.value}"
+        null -> name.value
+    },
+)

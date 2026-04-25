@@ -1,11 +1,6 @@
 package dev.mirabal.mealplanner.shoppinglist
 
-import dev.mirabal.mealplanner.shoppinglist.model.CreatedAt
 import dev.mirabal.mealplanner.shoppinglist.model.ItemName
-import dev.mirabal.mealplanner.shoppinglist.model.Quantity
-import dev.mirabal.mealplanner.shoppinglist.model.ShoppingItem
-import dev.mirabal.mealplanner.shoppinglist.model.ShoppingItem.Companion.DEFAULT_LIST_ID
-import dev.mirabal.mealplanner.shoppinglist.model.UpdatedAt
 import dev.mirabal.mealplanner.shoppinglist.testutil.FakeClock
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -58,18 +53,7 @@ class ShoppingListViewModelTest {
         viewModel.onAddClicked()
 
         val item = viewModel.items.value.first()
-        assertEquals(
-            ShoppingItem(
-                id = item.id,
-                listId = DEFAULT_LIST_ID,
-                name = ItemName("Milk"),
-                quantity = null,
-                checked = false,
-                createdAt = CreatedAt(clock.now),
-                updatedAt = UpdatedAt(clock.now),
-            ),
-            item,
-        )
+        assertEquals(ShoppingListUiItem(id = item.id, label = "Milk"), item)
         assertEquals("", viewModel.inputText.value)
         assertEquals("", viewModel.quantityInput.value)
     }
@@ -89,8 +73,8 @@ class ShoppingListViewModelTest {
         viewModel.onInputChanged("Butter")
         viewModel.onAddClicked()
 
-        val names = viewModel.items.value.map { it.name.value }
-        assertEquals(listOf("Butter", "Eggs"), names)
+        val labels = viewModel.items.value.map { it.label }
+        assertEquals(listOf("Butter", "Eggs"), labels)
     }
 
     @Test
@@ -130,7 +114,7 @@ class ShoppingListViewModelTest {
         viewModel.onAddClicked()
 
         val item = viewModel.items.value.first()
-        assertEquals(Quantity.WholeNumber(3), item.quantity)
+        assertEquals(ShoppingListUiItem(id = item.id, label = "3 Lemons"), item)
         assertEquals("", viewModel.inputText.value)
         assertEquals("", viewModel.quantityInput.value)
     }

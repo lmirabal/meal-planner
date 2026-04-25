@@ -22,7 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import dev.mirabal.mealplanner.shoppinglist.model.Quantity
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -71,12 +70,8 @@ internal fun ShoppingListScreen(viewModel: ShoppingListViewModel) {
                     }
                 }
             }
-            items(items, key = { it.id.value.toString() }) { item ->
-                val label = when (val q = item.quantity) {
-                    is Quantity.WholeNumber -> "${q.value} ${item.name.value}"
-                    null -> item.name.value
-                }
-                ListItem(headlineContent = { Text(label) })
+            items(items, key = { it.id }) { item ->
+                ListItem(headlineContent = { Text(item.label) })
             }
         }
     }
